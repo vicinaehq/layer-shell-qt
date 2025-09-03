@@ -30,13 +30,24 @@ include(FeatureSummary)
 include(GenerateExportHeader)
 include(KDEClangFormat)
 include(ECMQtDeclareLoggingCategory)
-include(ECMQmlModule)
 include(KDEGitCommitHooks)
 
 option(LAYER_SHELL_QT_DECLARATIVE "Add support for qtdeclarative" ON)
+option(LAYER_SHELL_QT_BUILD_TESTS "Whether to build test programs" ON)
 option(BUILD_SHARED_LIBS "Whether to build as a shared library. Will try to build as a static library instead if disabled." ON)
 
-find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS WaylandClient Qml)
+if (NOT LAYER_SHELL_QT_DECLARATIVE)
+	set(LAYER_SHELL_QT_BUILD_TESTS OFF)
+endif()
+
+set(QT_COMPONENTS WaylandClient)
+
+if (LAYER_SHELL_QT_DECLARATIVE)
+	include(ECMQmlModule)
+	list(APPEND QT_COMPONENTS Qml)
+endif()
+
+find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS ${QT_COMPONENTS})
 
 if (Qt6WaylandClient_VERSION VERSION_GREATER_EQUAL "6.10.0")
     find_package(Qt6WaylandClientPrivate ${REQUIRED_QT_VERSION} REQUIRED NO_MODULE)
@@ -68,7 +79,10 @@ ecm_set_disabled_deprecation_versions(QT 6.8.1
 )
 
 add_subdirectory(src)
-add_subdirectory(tests)
+
+if (LAYER_SHELL_QT_BUILD_TESTS)
+	add_subdirectory(tests)
+endif()
 
 set(CMAKECONFIG_INSTALL_DIR ${KDE_INSTALL_CMAKEPACKAGEDIR}/LayerShellQt)
 install(EXPORT LayerShellQtTargets
