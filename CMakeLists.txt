@@ -33,6 +33,9 @@ include(ECMQtDeclareLoggingCategory)
 include(ECMQmlModule)
 include(KDEGitCommitHooks)
 
+option(LAYER_SHELL_QT_DECLARATIVE "Add support for qtdeclarative" ON)
+option(BUILD_SHARED_LIBS "Whether to build as a shared library. Will try to build as a static library instead if disabled." ON)
+
 find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS WaylandClient Qml)
 
 if (Qt6WaylandClient_VERSION VERSION_GREATER_EQUAL "6.10.0")

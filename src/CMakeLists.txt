@@ -3,7 +3,11 @@
 
 remove_definitions(-DQT_NO_SIGNALS_SLOTS_KEYWORDS)
 
-add_library(LayerShellQtInterface)
+if (BUILD_SHARED_LIBS)
+	add_library(LayerShellQtInterface)
+else()
+	add_library(LayerShellQtInterface STATIC)
+endif()
 
 qt6_extract_metatypes(LayerShellQtInterface)
 
@@ -49,10 +53,12 @@ set_target_properties(LayerShellQtInterface PROPERTIES VERSION   ${LAYERSHELLQT_
                                                        EXPORT_NAME Interface
 )
 
-add_library(layer-shell SHARED qwaylandlayershellintegrationplugin.cpp)
-target_link_libraries(layer-shell LayerShellQtInterface Qt::WaylandClient Qt::WaylandClientPrivate Wayland::Client PkgConfig::XKBCOMMON)
-if (TARGET Qt::XkbCommonSupportPrivate)
-    target_link_libraries(layer-shell Qt::XkbCommonSupportPrivate)
+if (BUILD_SHARED_LIBS)
+	add_library(layer-shell SHARED qwaylandlayershellintegrationplugin.cpp)
+	target_link_libraries(layer-shell LayerShellQtInterface Qt::WaylandClient Qt::WaylandClientPrivate Wayland::Client PkgConfig::XKBCOMMON)
+	if (TARGET Qt::XkbCommonSupportPrivate)
+		target_link_libraries(layer-shell Qt::XkbCommonSupportPrivate)
+	endif()
 endif()
 
 ecm_generate_headers(LayerShellQt_HEADERS
@@ -70,8 +76,10 @@ generate_export_header(LayerShellQtInterface
     EXPORT_FILE_NAME LayerShellQt/layershellqt_export.h
 )
 
-install(TARGETS layer-shell
-        LIBRARY DESTINATION ${KDE_INSTALL_QTPLUGINDIR}/wayland-shell-integration)
+if (BUILD_SHARED_LIBS)
+	install(TARGETS layer-shell
+			LIBRARY DESTINATION ${KDE_INSTALL_QTPLUGINDIR}/wayland-shell-integration)
+endif()
 
 install(TARGETS LayerShellQtInterface EXPORT LayerShellQtTargets ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
@@ -81,4 +89,6 @@ install(FILES
     DESTINATION ${KDE_INSTALL_INCLUDEDIR}/LayerShellQt COMPONENT Devel
 )
 
-add_subdirectory(declarative)
+if (LAYER_SHELL_QT_DECLARATIVE)
+	add_subdirectory(declarative)
+endif()
