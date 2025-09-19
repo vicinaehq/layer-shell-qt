@@ -61,14 +61,24 @@ if (BUILD_SHARED_LIBS)
 	endif()
 endif()
 
-ecm_generate_headers(LayerShellQt_HEADERS
-    HEADER_NAMES
-        Shell
-        Window
-    RELATIVE interfaces/
-    PREFIX LayerShellQt
-    REQUIRED_HEADERS LayerShellQt_HEADERS
-)
+if (BUILD_SHARED_LIBS)
+	ecm_generate_headers(LayerShellQt_HEADERS
+		HEADER_NAMES
+			Shell
+			Window
+		RELATIVE interfaces/
+		REQUIRED_HEADERS LayerShellQt_HEADERS
+	)
+else()
+   ecm_generate_headers(LayerShellQt_HEADERS
+		HEADER_NAMES
+			Shell
+			Window
+		RELATIVE interfaces/
+		PREFIX LayerShellQt
+		REQUIRED_HEADERS LayerShellQt_HEADERS
+	)
+endif()
 
 
 generate_export_header(LayerShellQtInterface
