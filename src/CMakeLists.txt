@@ -66,6 +66,7 @@ ecm_generate_headers(LayerShellQt_HEADERS
         Shell
         Window
     RELATIVE interfaces/
+    PREFIX LayerShellQt
     REQUIRED_HEADERS LayerShellQt_HEADERS
 )
 

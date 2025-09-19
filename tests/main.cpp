@@ -14,7 +14,7 @@
 
 #include <QMetaEnum>
 
-#include <interfaces/window.h>
+#include "Window"
 
 using namespace LayerShellQt;
 
